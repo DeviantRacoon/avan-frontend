@@ -34,7 +34,7 @@ const fullTheme = createTheme({
     },
     background: {
       default: '#fafafa',
-      paper: '#f5f5f5',
+      paper: '#ffffff',
     },
     text: {
       primary: '#212121',

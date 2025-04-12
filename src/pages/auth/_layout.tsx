@@ -1,11 +1,20 @@
+// File: /components/layout/AuthLayout.tsx
 import React from 'react'
-import { Container } from '@mui/material'
+import { Box, useTheme } from '@mui/material'
 
-export default function AuthLayout({ children }: any) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const theme = useTheme()
+
   return (
-    <Container component={"main"} sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+    <Box
+      component="main"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+      px={2}
+      sx={{ background: theme.palette.background.default, transition: 'all 0.3s ease-in-out' }}>
       {children}
-    </Container>
+    </Box>
   )
 }
-

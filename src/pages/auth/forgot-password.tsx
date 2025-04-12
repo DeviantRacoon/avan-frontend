@@ -53,13 +53,14 @@ export default function ForgotPassword() {
 
         <Stack spacing={3} width={"100%"}>
           <SmartInput
+            required
+            pattern={{ message: "Formato de correo inválido", value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i }}
             label="Correo electrónico"
             placeholder="Escribe tu correo electrónico"
             type="email"
             name="email"
             leftIcon={<img src="/assets/svg/mail-outline.svg" alt="correo" width="20" />}
             size="small"
-            onChange={(val) => console.log(val)}
           />
         </Stack>
 
