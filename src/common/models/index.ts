@@ -1,0 +1,1 @@
+export { type IUserLogin } from "./interfaces/user-login.interface";

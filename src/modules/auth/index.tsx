@@ -1,4 +1,4 @@
-// File: /components/auth/AuthModule.tsx
+// Libraries
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,10 +10,16 @@ import { Stack, Typography, Paper, useTheme, useMediaQuery } from "@mui/material
 // Components
 import { SmartButton, SmartInput, SmartInputRef } from "@/common/components";
 
+// Hooks
+import { useAppDispatch } from "@/common/hooks";
+import { setCurrentUser } from "@/common/redux"; 
+
 // Services
 import { login } from "./auth.services";
 
 export default function AuthModule() {
+  const dispatch = useAppDispatch();
+  
   const router = Router;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -43,9 +49,11 @@ export default function AuthModule() {
     if (error) {
       setLoading("error");
       return;
-    }
+    };
 
     setLoading("idle");
+    const [currentUser] = response.data
+    dispatch(setCurrentUser(currentUser));
     router.push("/home");
   };
 

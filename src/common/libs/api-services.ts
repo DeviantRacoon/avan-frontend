@@ -1,3 +1,4 @@
+// ✅ NO CAMBIA: imports y definición
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
@@ -8,27 +9,19 @@ import axios, {
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-/**
- * Opciones extendidas para cada petición.
- */
 export interface RequestOptions {
-  /** Parámetros para query string (solo para GET, DELETE, HEAD) */
   params?: Record<string, any>;
-
-  /** Headers adicionales opcionales */
   headers?: Record<string, string>;
-
-  /** Timeout específico en milisegundos (por defecto 10000) */
   timeout?: number;
-
-  /** Si `true`, se enviará como `multipart/form-data` */
   isFormData?: boolean;
 }
 
-/**
- * Servicio HTTP profesional para llamadas API.
- * Soporta JSON, archivos, headers dinámicos y timeout.
- */
+// ✅ NUEVO tipo para retorno seguro
+export interface SafeResponse<T> {
+  response?: T;
+  error?: { status?: number; message: string };
+}
+
 class ApiService {
   private instance: AxiosInstance;
 
@@ -41,7 +34,6 @@ class ApiService {
       },
     });
 
-    // Interceptor para añadir tokens automáticamente si existen
     this.instance.interceptors.request.use((config) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -53,27 +45,19 @@ class ApiService {
       return config;
     });
 
-    // Interceptor global de errores
     this.instance.interceptors.response.use(
       (response) => response,
       (error) => Promise.reject(this.formatError(error))
     );
   }
 
-  /**
-   * Formatea errores en una estructura uniforme.
-   */
-  private formatError(error: AxiosError) {
+  private formatError(error: any) {
     return {
-      message: 'Error inesperado en la solicitud',
-      status: error.response?.status,
-      data: error.response?.data,
+      status: error?.response?.data?.code || 500,
+      message: error?.response?.data?.desc || 'Oops! Ha ocurrido un error inesperado',
     };
   }
 
-  /**
-   * Método base para todas las llamadas.
-   */
   private async request<T = any>(
     method: Method,
     endpoint: string,
@@ -127,6 +111,38 @@ class ApiService {
 
   public head<T = any>(endpoint: string, options?: RequestOptions) {
     return this.request<T>('HEAD', endpoint, undefined, options);
+  }
+
+  // ✅ Nueva API segura
+  public safe = {
+    get: <T = any>(endpoint: string, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('GET', endpoint, undefined, options),
+
+    post: <T = any>(endpoint: string, data?: any, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('POST', endpoint, data, options),
+
+    put: <T = any>(endpoint: string, data?: any, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('PUT', endpoint, data, options),
+
+    patch: <T = any>(endpoint: string, data?: any, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('PATCH', endpoint, data, options),
+
+    delete: <T = any>(endpoint: string, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('DELETE', endpoint, undefined, options),
+  };
+
+  private async wrapSafe<T>(
+    method: Method,
+    endpoint: string,
+    data?: any,
+    options?: RequestOptions
+  ): Promise<SafeResponse<T>> {
+    try {
+      const response = await this.request<T>(method, endpoint, data, options);
+      return { response };
+    } catch (error) {
+      return { error: this.formatError(error) };
+    }
   }
 }
 

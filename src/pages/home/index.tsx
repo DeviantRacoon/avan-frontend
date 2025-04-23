@@ -1,14 +1,17 @@
 'use client'
 
+// Libraries
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
+// MUI
+import AddIcon from '@mui/icons-material/Add'
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
+
+// Components
 import RootLayout from '@/common/components/ui/layout'
 import { SmartTable, Header, SmartButton } from '@/common/components'
 import type { Row } from '@/common/components/ui/SmartTable/types'
-
-import AddIcon from '@mui/icons-material/Add'
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 
 export default function Dashboard() {
   const searchParams = useSearchParams()
@@ -25,10 +28,9 @@ export default function Dashboard() {
     newParams.set('page', page.toString())
     newParams.set('limit', limit.toString())
     router.push(`?${newParams.toString()}`)
-  }
+  };
 
   const fetchData = (page: number, limit: number, action: 'page' | 'rowsPerPage') => {
-    console.log(`✅ Acción: ${action} | Página: ${page + 1} | Límite: ${limit}`)
     updateUrlParams(page, limit)
 
     const allRows = [

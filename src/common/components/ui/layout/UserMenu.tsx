@@ -1,7 +1,7 @@
-// File: /components/layout/UserMenu.tsx
 'use client';
 
 import React, { useState } from 'react';
+
 import {
   Avatar,
   Box,
@@ -14,12 +14,18 @@ import {
   useTheme,
   Paper
 } from '@mui/material';
+
 import Logout from '@mui/icons-material/Logout';
 import Settings from '@mui/icons-material/Settings';
 import Person from '@mui/icons-material/Person';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 
+import { useAppSelector } from '@/common/hooks';
+import { selectCurrentUser, clearCurrentUser } from '@/common/redux';
+
 export default function UserMenu() {
+  const currentUser = useAppSelector(selectCurrentUser);
+
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -34,6 +40,7 @@ export default function UserMenu() {
 
   const handleLogout = () => {
     console.log('Logging out...');
+    // clearCurrentUser();
     handleClose();
   };
 
@@ -44,13 +51,15 @@ export default function UserMenu() {
         sx={{ p: 0, display: 'flex', alignItems: 'center', gap: 1 }}
         aria-controls={open ? 'user-menu' : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-      >
-        <Avatar alt="Juan Pérez" sx={{ width: 36, height: 36, bgcolor: theme.palette.secondary.main }}>
-          JP
+        aria-expanded={open ? 'true' : undefined}>
+        <Avatar
+          alt={currentUser?.completeName}
+          src={currentUser?.photo_src || undefined}
+          sx={{ width: 36, height: 36, bgcolor: theme.palette.secondary.main }}>
+          {!currentUser?.photo_src && currentUser?.completeName?.charAt(0).toUpperCase()}
         </Avatar>
         <Typography variant="body2" fontWeight={500} color="primary.contrastText" sx={{ display: { xs: 'none', sm: 'block' } }}>
-          Juan Pérez
+          {currentUser?.completeName?.toUpperCase()}
         </Typography>
         <ArrowDropDown />
       </IconButton>

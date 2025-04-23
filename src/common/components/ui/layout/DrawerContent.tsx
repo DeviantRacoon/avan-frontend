@@ -8,7 +8,6 @@ import React, {
   useState,
   Fragment,
   useCallback,
-  useMemo
 } from 'react'
 
 import {
@@ -24,6 +23,8 @@ import {
   ChevronRight,
   ExpandMore,
 } from '@mui/icons-material'
+
+import { useDrawerContent } from './useDrawerContent'
 
 import {
   SidebarContainer,
@@ -45,23 +46,9 @@ interface MenuItem {
 }
 
 const DrawerContent = ({ expanded, toggleExpand }: DrawerContentProps) => {
+  const { menuItems } = useDrawerContent()
   const pathname = usePathname()
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({})
-
-  const menuItems = useMemo<MenuItem[]>(() => [
-    { label: 'Dashboard', icon: <img src="/assets/svg/grid-outline.svg" alt="correo" width="20" />, link: '/home' },
-    { label: 'Dashboard', icon: <img src="/assets/svg/grid-outline.svg" alt="correo" width="20" />, link: '/home' },
-    { label: 'Orders', icon: <img src="/assets/svg/cart-outline.svg" alt="correo" width="20" />, link: '/orders' },
-    {
-      label: 'Reports',
-      icon: <img src="/assets/svg/file-tray-full-outline.svg" alt="correo" width="20" />,
-      submenu: [
-        { label: 'Sales', link: '/reports/sales' },
-        { label: 'Traffic', link: '/reports/traffic' }
-      ]
-    },
-    { label: 'Integrations', icon: <img src="/assets/svg/grid-outline.svg" alt="correo" width="20" />, link: '/integrations' }
-  ], [])
 
   const toggleSubmenu = useCallback((label: string) => {
     setOpenSubmenus(prev => ({ ...prev, [label]: !prev[label] }))
