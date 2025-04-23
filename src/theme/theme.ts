@@ -1,74 +1,73 @@
-// File: /theme/fullTheme.ts
 import { createTheme } from '@mui/material/styles';
 
 const fullTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#0d47a1',
-      light: '#5472d3',
-      dark: '#002171',
+      main: '#0F4C81',       // Azul brillante profesional
+      light: '#4F7CAF',
+      dark: '#062B4F',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#d81b60',
-      light: '#ff5c8d',
-      dark: '#a00037',
+      main: '#C8102E',       // Rojo vibrante elegante
+      light: '#F2546D',
+      dark: '#900021',
       contrastText: '#ffffff',
     },
     error: {
-      main: '#d32f2f',
+      main: '#D32F2F',
       contrastText: '#ffffff',
     },
     warning: {
-      main: '#f57c00',
-      contrastText: '#000000',
+      main: '#FFA000',
+      contrastText: '#212121',
     },
     info: {
-      main: '#1976d2',
+      main: '#0288D1',
       contrastText: '#ffffff',
     },
     success: {
-      main: '#388e3c',
+      main: '#43A047',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#fafafa',
+      default: '#F8FAFF',
       paper: '#ffffff',
     },
     text: {
-      primary: '#212121',
-      secondary: '#757575',
-      disabled: '#bdbdbd',
+      primary: '#1A1A1A',
+      secondary: '#555F75',
+      disabled: '#A3A3A3',
     },
-    divider: '#e0e0e0',
+    divider: '#E0E0E0',
     grey: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#eeeeee',
-      300: '#e0e0e0',
-      400: '#bdbdbd',
-      500: '#9e9e9e',
-      600: '#757575',
-      700: '#616161',
-      800: '#424242',
-      900: '#212121',
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      200: '#E5E7EB',
+      300: '#D1D5DB',
+      400: '#9CA3AF',
+      500: '#6B7280',
+      600: '#4B5563',
+      700: '#374151',
+      800: '#1F2937',
+      900: '#111827',
     },
   },
   typography: {
-    fontFamily: 'Inter, Roboto, sans-serif',
+    fontFamily: `'Inter', 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif`,
     fontSize: 14,
     h1: {
       fontSize: '3rem',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h2: {
       fontSize: '2.25rem',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h3: {
       fontSize: '1.75rem',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h4: {
       fontSize: '1.5rem',
@@ -82,72 +81,57 @@ const fullTheme = createTheme({
       fontSize: '1rem',
       fontWeight: 600,
     },
+    body1: {
+      fontSize: '1rem',
+      color: '#1A1A1A',
+    },
+    body2: {
+      fontSize: '0.875rem',
+      color: '#555F75',
+    },
     button: {
       textTransform: 'none',
       fontWeight: 500,
     },
-    body1: {
-      fontSize: '1rem',
-    },
-    body2: {
-      fontSize: '0.875rem',
-    },
     caption: {
       fontSize: '0.75rem',
+      color: '#A3A3A3',
     },
   },
+  shape: {
+    borderRadius: 10,
+  },
+  spacing: 8,
+  shadows: Array(25).fill('0px 2px 6px rgba(0, 0, 0, 0.06)'),
   breakpoints: {
     values: {
       xs: 0,
       sm: 600,
-      md: 900,
-      lg: 1200,
+      md: 960,
+      lg: 1280,
       xl: 1536,
     },
   },
-  shape: {
-    borderRadius: 8,
-  },
-  spacing: 8,
-  shadows: [
-    'none',
-    '0px 1px 3px rgba(0,0,0,0.12)',
-    '0px 1px 5px rgba(0,0,0,0.2)',
-    '0px 1px 8px rgba(0,0,0,0.24)',
-    '0px 2px 4px rgba(0,0,0,0.18)',
-    '0px 3px 5px rgba(0,0,0,0.2)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-    '0px 4px 10px rgba(0,0,0,0.1)',
-  ],
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#F8FAFF',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
+          fontWeight: 500,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 10,
         },
       },
     },
@@ -155,8 +139,8 @@ const fullTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#ffffff',
-          color: '#212121',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+          color: '#1A1A1A',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
         },
       },
     },

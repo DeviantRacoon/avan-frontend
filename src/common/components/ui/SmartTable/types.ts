@@ -1,0 +1,31 @@
+export interface Column {
+  id: string
+  label: string
+  align?: 'right' | 'left' | 'center'
+  type?: 'status' | 'date' | 'datetime' | 'money' | 'percentage'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
+  tooltip?: boolean
+}
+
+export interface Row {
+  id: string | number
+  [key: string]: any
+}
+
+export interface Action {
+  label: string
+  icon: React.ReactNode
+  onClick: (row: Row) => void
+  hidden?: boolean
+}
+
+export interface SmartTableProps {
+  columns: Column[]
+  rows: Row[]
+  total?: number
+  page?: number
+  loading?: boolean
+  onClick?: (row: Row) => void
+  actions?: Action[]
+  onPaginate?: (page: number, rowsPerPage: number, action: 'page' | 'rowsPerPage') => void
+}

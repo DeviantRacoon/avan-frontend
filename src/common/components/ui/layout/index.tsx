@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const drawerWidth = 230;
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bs-body-bg)', overflow: 'hidden' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default', overflow: 'hidden' }}>
       <CssBaseline />
 
       <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1400 }}>
@@ -33,9 +33,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </motion.div>
 
       <motion.main
-        animate={{ x: expanded ? 0 : -drawerWidth + drawerWidth * 0.1 }}
+        animate={{
+          marginLeft: expanded ? drawerWidth : drawerWidth * 0.1,
+          width: expanded ? `calc(100% - ${drawerWidth}px)` : `calc(100% - ${drawerWidth * 0.1}px)`,
+        }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        style={{ marginLeft: drawerWidth, padding: 24, paddingTop: 88, overflowY: 'auto', height: '100vh' }}>
+        style={{
+          padding: 14,
+          paddingTop: 75,
+          overflowY: 'auto',
+          height: '100vh',
+        }}>
         {children}
       </motion.main>
     </Box>

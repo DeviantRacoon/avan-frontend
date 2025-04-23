@@ -50,6 +50,7 @@ const DrawerContent = ({ expanded, toggleExpand }: DrawerContentProps) => {
 
   const menuItems = useMemo<MenuItem[]>(() => [
     { label: 'Dashboard', icon: <img src="/assets/svg/grid-outline.svg" alt="correo" width="20" />, link: '/home' },
+    { label: 'Dashboard', icon: <img src="/assets/svg/grid-outline.svg" alt="correo" width="20" />, link: '/home' },
     { label: 'Orders', icon: <img src="/assets/svg/cart-outline.svg" alt="correo" width="20" />, link: '/orders' },
     {
       label: 'Reports',
