@@ -18,6 +18,7 @@ interface FilterOption {
 
 interface FilterItem {
   label: string
+  key: string
   options: FilterOption[]
 }
 
@@ -68,11 +69,11 @@ export default function SmartFilterMenu({
       <Divider sx={{ mb: 2 }} />
 
       {filters.map((filter) => (
-        <FormControl key={filter.label} fullWidth size="small" sx={{ mb: 2 }}>
+        <FormControl key={filter.key} fullWidth size="small" sx={{ mb: 2 }}>
           <InputLabel>{filter.label}</InputLabel>
           <Select
-            value={activeFilters[filter.label] || ''}
-            onChange={(e) => onFilterSelect(filter.label, e.target.value)}
+            value={activeFilters[filter.key] || ''}
+            onChange={(e) => onFilterSelect(filter.key, e.target.value)}
             label={filter.label}>
             <MenuItem value="" disabled>
               Seleccione una opción
@@ -84,6 +85,7 @@ export default function SmartFilterMenu({
             ))}
           </Select>
         </FormControl>
+
       ))}
 
       <Button

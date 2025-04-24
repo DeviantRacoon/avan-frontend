@@ -1,3 +1,5 @@
+import { IFilterProps } from "./filter-props.interface"
+
 export interface Column {
   id: string
   label: string
@@ -19,7 +21,7 @@ export interface Action {
   hidden?: boolean
 }
 
-export interface SmartTableProps {
+export interface ISmartTableProps {
   columns: Column[]
   rows: Row[]
   total?: number
@@ -27,5 +29,6 @@ export interface SmartTableProps {
   loading?: boolean
   onClick?: (row: Row) => void
   actions?: Action[]
-  onPaginate?: (page: number, rowsPerPage: number, action: 'page' | 'rowsPerPage') => void
+  filters?: IFilterProps[],
+  orderByField?: string
 }

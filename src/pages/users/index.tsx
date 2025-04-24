@@ -2,7 +2,7 @@
 
 // Libraries
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 // MUI
 import AddIcon from '@mui/icons-material/Add'
@@ -11,15 +11,28 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 // Components
 import RootLayout from '@/common/components/ui/layout'
 import { SmartTable, Header, SmartButton } from '@/common/components'
-import type { Row } from '@/common/models/interfaces/common/table-props.interface'
+import type { Row } from '@/common/components/ui/SmartTable/types'
 
 export default function Dashboard() {
+  const searchParams = useSearchParams()
   const router = useRouter()
 
   const [rows, setRows] = useState<Row[]>([])
   const [total, setTotal] = useState(0)
 
-  const fetchData = () => {
+  const page = parseInt(searchParams.get('page') || '0', 10)
+  const limit = parseInt(searchParams.get('limit') || '15', 10)
+
+  const updateUrlParams = (page: number, limit: number) => {
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.set('page', page.toString())
+    newParams.set('limit', limit.toString())
+    router.push(`?${newParams.toString()}`)
+  };
+
+  const fetchData = (page: number, limit: number, action: 'page' | 'rowsPerPage') => {
+    updateUrlParams(page, limit)
+
     const allRows = [
       { id: 1, name: 'Juan Pérez Juan Pérez Juan Pérez', email: 'ZqV9y@example.com', phone: '1234567890', address: 'Calle 123, Ciudad', status: 'activo', createdAt: '2023-10-01T12:00:00Z' },
       { id: 2, name: 'María López', email: 's4NtI@example.com', phone: '9876543210', address: 'Calle 456, Ciudad', status: 'inactivo', createdAt: '2023-10-01T12:00:00Z' },
@@ -29,13 +42,16 @@ export default function Dashboard() {
       { id: 6, name: 'Laura Ramírez', email: 'Gn5wF@example.com', phone: '3333333333', address: 'Calle 987, Ciudad', status: 'inactivo', createdAt: '2023-10-01T12:00:00Z' }
     ]
 
-    setRows(allRows)
+    const start = page * limit
+    const paginated = allRows.slice(start, start + limit)
+
+    setRows(paginated)
     setTotal(allRows.length)
   };
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    fetchData(page, limit, 'page')
+  }, [page, limit])
 
   return (
     <RootLayout>
@@ -54,17 +70,9 @@ export default function Dashboard() {
       />
 
       <SmartTable
+        page={page}
         onClick={(row) => console.log(row)}
-        filters={[
-          {
-            label: 'Estatus',
-            key: 'status',
-            options: [
-              { label: 'Activo', value: 'activo' },
-              { label: 'Inactivo', value: 'inactivo' }
-            ]
-          }
-        ]}
+        onPaginate={fetchData}
         columns={[
           { id: 'name', label: 'Nombre', tooltip: true },
           { id: 'email', label: 'Email' },
@@ -73,7 +81,6 @@ export default function Dashboard() {
           { id: 'status', label: 'Estado', size: 'xs', type: 'status', align: 'center' },
           { id: 'createdAt', label: 'Creación', type: 'date', align: 'center', size: 'sm' },
         ]}
-        orderByField="name"
         rows={rows}
         total={total}
         actions={[
