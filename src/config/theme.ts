@@ -36,8 +36,8 @@ const fullTheme = createTheme({
       paper: '#ffffff',
     },
     text: {
-      primary: '#1A1A1A',
-      secondary: '#555F75',
+      primary: '#02395B',
+      secondary: '#2E4053',
       disabled: '#A3A3A3',
     },
     divider: '#E0E0E0',

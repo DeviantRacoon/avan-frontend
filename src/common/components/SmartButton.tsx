@@ -19,7 +19,7 @@
  * @param hidden       Oculta el botón visualmente (pero mantiene accesibilidad)
  * @param loading      Muestra un spinner mientras está activo
  * @param leftIcon     Ícono opcional a la izquierda del texto
- * @param className    Clase CSS personalizada
+ * @param flex         Si el botón debe ser flexible (opcional)
  */
 
 import { Button, CircularProgress } from '@mui/material'
@@ -37,7 +37,7 @@ interface SmartButtonProps {
   hidden?: boolean
   loading?: boolean
   leftIcon?: React.ReactNode
-  className?: string
+  sx?: React.CSSProperties
 }
 
 function SmartButton({
@@ -51,7 +51,7 @@ function SmartButton({
   hidden = false,
   loading = false,
   leftIcon,
-  className
+  sx = {},
 }: SmartButtonProps) {
   const autoId = useId()
   const generatedId = label.toLowerCase().replace(/\s+/g, '-') || autoId
@@ -66,10 +66,9 @@ function SmartButton({
       onClick={onClick}
       fullWidth={fullWidth}
       disabled={disabled || loading}
-      className={className}
       startIcon={leftIcon}
       disableElevation
-      sx={{ mt: 2, visibility: hidden ? 'hidden' : 'visible' }}>
+      sx={{ mt: 2, visibility: hidden ? 'hidden' : 'visible', ...sx }}>
       {loading ? <CircularProgress size={22} color="inherit" /> : label}
     </Button>
   )

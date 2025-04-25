@@ -46,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}>
         {children}
       </motion.main>
+      <div id="modal-root"></div>
     </Box>
   );
 }

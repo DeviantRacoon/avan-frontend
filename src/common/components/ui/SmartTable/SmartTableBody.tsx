@@ -7,7 +7,7 @@ import { TableBody, TableRow, TableCell, Checkbox, IconButton, Skeleton, Chip, T
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 // Resources
-import type { Column, Row, Action } from './types'
+import type { Column, Row, Action } from '@/common/models'
 import { STATUS_TO_VARIANT } from '@/common/utils/constants'
 
 
@@ -18,7 +18,6 @@ interface TableBodyContentProps {
   selected: Set<string | number>
   onRowClick: (id: string | number) => void
   onClick: (row: Row) => void | null
-  // onMenuClick: (event: React.MouseEvent<HTMLElement>, row: Row) => void
   actions?: Action[]
 }
 
@@ -33,17 +32,20 @@ const pixelSizeMap: Record<NonNullable<Column['size']>, number> = {
 
 const TableBodyContent = ({ columns, rows, loading, selected, onRowClick, onClick, actions }: TableBodyContentProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, row: Row) => {
     setAnchorEl(event.currentTarget)
+    setSelectedRow(row)
   }
 
   const handleMenuClose = () => {
     setAnchorEl(null)
-  };
+    setSelectedRow(null)
+  }
 
-  const clickMenuItem = (action: Action, row: Row) => {
-    action.onClick(row)
+  const clickMenuItem = (action: Action) => {
+    if (selectedRow) action.onClick(selectedRow)
     handleMenuClose()
   };
 
@@ -132,7 +134,12 @@ const TableBodyContent = ({ columns, rows, loading, selected, onRowClick, onClic
           {actions?.length && (
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
               {actions.map((action) => (
-                <MenuItem key={action.label} onClick={() => clickMenuItem(action, row)} hidden={!action.hidden} sx={{ cursor: 'pointer', gap: 1 }}>
+                <MenuItem
+                  key={action.label}
+                  onClick={() => clickMenuItem(action)}
+                  hidden={action.hidden}
+                  sx={{ cursor: 'pointer', gap: 1 }}
+                >
                   {action.icon}
                   {action.label}
                 </MenuItem>
