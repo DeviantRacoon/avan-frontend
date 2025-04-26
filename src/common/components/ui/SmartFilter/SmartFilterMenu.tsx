@@ -10,6 +10,8 @@ import {
   Typography
 } from '@mui/material'
 
+import CloseIcon from '@mui/icons-material/Close';
+
 interface FilterOption {
   label: string
   value: string
@@ -92,7 +94,7 @@ export default function SmartFilterMenu({
         fullWidth
         variant="outlined"
         color="secondary"
-        startIcon={<img src="/assets/svg/close-outline.svg" alt="quit" width={20} />}
+        startIcon={<CloseIcon />}
         onClick={onClearFilters}>
         Limpiar filtros
       </Button>

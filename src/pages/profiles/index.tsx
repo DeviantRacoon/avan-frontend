@@ -15,7 +15,7 @@ import type { Row } from "@/common/models/interfaces/common/table-props.interfac
 // Services
 import { getUsers, createUser, updateUser } from "@/modules/user/user.services";
 
-export default function Users() {
+export default function Profiles() {
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState({ isOpen: false, title: "", message: "" });
   const [showFormModal, setShowFormModal] = useState({ isOpen: false, isEdit: false });
@@ -89,12 +89,12 @@ export default function Users() {
   return (
     <RootLayout>
       <Header
-        title="Usuarios"
-        description="Administra todos los usuarios registrados en el sistema."
+        title="Perfiles"
+        description="Administra los perfiles de los usuarios."
         icon={<PeopleAltIcon fontSize="large" color="primary" />}
         actions={
           <SmartButton
-            label="Agregar usuario"
+            label="Agregar perfil"
             variant="contained"
             leftIcon={<AddIcon />}
             onClick={() => {

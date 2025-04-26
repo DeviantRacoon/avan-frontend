@@ -1,9 +1,9 @@
 'use client';
+
 import React from 'react';
 import Image from 'next/image';
 
 import UserMenu from './UserMenu';
-
 import { Stack, Toolbar } from '@mui/material';
 
 export default function AppHeader() {

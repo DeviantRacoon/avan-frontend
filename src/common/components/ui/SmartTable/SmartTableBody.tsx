@@ -1,6 +1,7 @@
 // Libraries
 import React, { useCallback, useState } from 'react'
-import { format as formatDate } from 'date-fns'
+import { format as formatDate, parse } from 'date-fns'
+
 
 // MUI
 import { TableBody, TableRow, TableCell, Checkbox, IconButton, Skeleton, Chip, Tooltip, Typography, Menu, MenuItem } from '@mui/material'
@@ -57,10 +58,20 @@ const TableBodyContent = ({ columns, rows, loading, selected, onRowClick, onClic
         content = <Chip size="small" label={value} sx={{ textTransform: 'capitalize', width: 70 }} color={STATUS_TO_VARIANT[value] as any ?? 'default'} />
         break
       case 'date':
-        content = formatDate(new Date(value), 'dd/MM/yyyy')
+        try {
+          const parsed = parse(value, 'yyyy-MM-dd', new Date())
+          content = formatDate(parsed, 'yyyy-MM-dd')
+        } catch (error) {
+          content = '-'
+        } 
         break
       case 'datetime':
-        content = formatDate(new Date(value), 'dd/MM/yyyy HH:mm:ss')
+        try {
+          const parsed = parse(value, 'yyyy-MM-dd HH:mm:ss', new Date())
+          content = formatDate(parsed, 'yyyy-MM-dd HH:mm:ss')
+        } catch (error) {
+          content = '-'
+        } 
         break
       case 'money':
         content = `$${Number(value).toFixed(2)}`

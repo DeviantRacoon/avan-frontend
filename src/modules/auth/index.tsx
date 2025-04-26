@@ -12,14 +12,14 @@ import { SmartButton, SmartInput, SmartInputRef } from "@/common/components";
 
 // Hooks
 import { useAppDispatch } from "@/common/hooks";
-import { setCurrentUser } from "@/common/redux"; 
+import { setCurrentUser } from "@/common/redux";
 
 // Services
 import { login } from "./auth.services";
 
 export default function AuthModule() {
   const dispatch = useAppDispatch();
-  
+
   const router = Router;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -53,6 +53,9 @@ export default function AuthModule() {
 
     setLoading("idle");
     const [currentUser] = response.data
+
+    document.cookie = `sessionToken=${currentUser.token}; Path=/; Max-Age=${60 * 60 * 4}; SameSite=Lax; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`;
+
     dispatch(setCurrentUser(currentUser));
     router.push("/home");
   };

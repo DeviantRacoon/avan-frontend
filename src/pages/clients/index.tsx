@@ -1,65 +1,90 @@
-'use client'
+"use client";
 
 // Libraries
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from "react";
 
 // MUI
-import AddIcon from '@mui/icons-material/Add'
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
+import AddIcon from "@mui/icons-material/Add";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 // Components
-import RootLayout from '@/common/components/ui/layout'
-import { SmartTable, Header, SmartButton, Modal, ConfirmModal } from '@/common/components'
-import type { Row } from '@/common/models/interfaces/common/table-props.interface'
+import RootLayout from "@/common/components/ui/layout";
+import { SmartTable, Header, SmartButton, ModalForm, ConfirmModal } from "@/common/components";
+import type { Row } from "@/common/models/interfaces/common/table-props.interface";
 
-export default function Dashboard() {
-  const router = useRouter()
+// Services
+import { getUsers, createUser, updateUser } from "@/modules/user/user.services";
 
-  const [showConfirmModal, setShowConfirmModal] = useState({ isOpen: false, title: '', message: '' })
-  const [rows, setRows] = useState<Row[]>([])
-  const [total, setTotal] = useState(0)
+export default function Clients() {
+  const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState({ isOpen: false, title: "", message: "" });
+  const [showFormModal, setShowFormModal] = useState({ isOpen: false, isEdit: false });
 
-  const handleConfirm = () => {
-    console.log('✅ Confirmado')
-    setShowConfirmModal({ ...showConfirmModal, isOpen: false })
-  }
+  const [rows, setRows] = useState<Row[]>([]);
+  const [total, setTotal] = useState(0);
+  const [selected, setSelected] = useState<any>({});
 
-  const handleEdit = (row: Row) => {
-    console.log('Editar', row)
-    setShowConfirmModal({
-      isOpen: true,
-      title: 'Editar usuario',
-      message: `¿Estás seguro de que deseas editar a ${row.name}?`
-    })
-  }
+  const handleSubmit = async (values: any) => {
+    setLoading(true);
 
-  const handleDelete = (row: Row) => {
-    console.log('Eliminar', row)
-    setShowConfirmModal({
-      isOpen: true,
-      title: 'Eliminar usuario',
-      message: `¿Estás seguro de que deseas eliminar a ${row.name}?`
-    })
-  }
+    let hasError;
+    if (showFormModal.isEdit) {
+      const { error } = await updateUser({ ...selected, fake_user: 0, id_user: selected.idUser });
+      hasError = error;
+    } else {
+      const data = { live: "1", id_client: "1", id_team: "0", user_id: values.idUser, ...values };
+      const { error } = await createUser(data);
+      hasError = error;
+    };
 
-  const fetchData = () => {
-    const allRows = [
-      { id: 1, name: 'Juan Pérez Juan Pérez Juan Pérez', email: 'ZqV9y@example.com', phone: '1234567890', address: 'Calle 123, Ciudad', status: 'activo', createdAt: '2023-10-01T12:00:00Z' },
-      { id: 2, name: 'María López', email: 's4NtI@example.com', phone: '9876543210', address: 'Calle 456, Ciudad', status: 'inactivo', createdAt: '2023-10-01T12:00:00Z' },
-      { id: 3, name: 'Pedro González', email: 'kK3q2@example.com', phone: '5555555555', address: 'Calle 789, Ciudad', status: 'activo', createdAt: '2023-10-01T12:00:00Z' },
-      { id: 4, name: 'Ana Martínez', email: 'B4CfA@example.com', phone: '1111111111', address: 'Calle 321, Ciudad', status: 'inactivo', createdAt: '2023-10-01T12:00:00Z' },
-      { id: 5, name: 'Luis Fernández', email: 'z7kX6@example.com', phone: '2222222222', address: 'Calle 654, Ciudad', status: 'activo', createdAt: '2023-10-01T12:00:00Z' },
-      { id: 6, name: 'Laura Ramírez', email: 'Gn5wF@example.com', phone: '3333333333', address: 'Calle 987, Ciudad', status: 'inactivo', createdAt: '2023-10-01T12:00:00Z' }
-    ]
+    if (hasError) {
+      console.error(hasError);
+      setLoading(false);
+      return;
+    }
 
-    setRows(allRows)
-    setTotal(allRows.length)
+    await fetchData();
+    setShowFormModal({ isOpen: false, isEdit: false });
+    setLoading(false);
+  };
+
+  const fetchData = async () => {
+    const { response, error } = await getUsers();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setRows(response.data);
+    setTotal(response.data.length);
   };
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
+
+  const handleConfirm = () => {
+    setShowConfirmModal({ ...showConfirmModal, isOpen: false });
+  };
+
+  const handleCreate = () => {
+    setSelected({});
+    setShowFormModal({ ...showFormModal, isOpen: false })
+  };
+
+  const handleEdit = (row: Row) => {
+    setSelected({ ...row, new_user: row.username });
+    setShowFormModal({ isOpen: true, isEdit: true });
+  };
+
+  const handleDelete = (row: Row) => {
+    setShowConfirmModal({
+      isOpen: true,
+      title: "Eliminar usuario",
+      message: `¿Estás seguro de que deseas eliminar a ${row.name}?`,
+    });
+  };
 
   return (
     <RootLayout>
@@ -72,6 +97,9 @@ export default function Dashboard() {
             label="Agregar usuario"
             variant="contained"
             leftIcon={<AddIcon />}
+            onClick={() => {
+              setShowFormModal({ isOpen: true, isEdit: false });
+            }}
           />
         }
       />
@@ -80,36 +108,104 @@ export default function Dashboard() {
         onClick={(row) => console.log(row)}
         filters={[
           {
-            label: 'Estatus',
-            key: 'status',
+            label: "Estado",
+            key: "logged",
             options: [
-              { label: 'Activo', value: 'activo' },
-              { label: 'Inactivo', value: 'inactivo' }
-            ]
-          }
+              { label: "Web", value: "Online web" },
+              { label: "App", value: "Online app" },
+              { label: "Offline", value: "offline" },
+            ],
+          },
         ]}
         columns={[
-          { id: 'name', label: 'Nombre', tooltip: true },
-          { id: 'email', label: 'Email' },
-          { id: 'phone', label: 'Teléfono' },
-          { id: 'address', label: 'Dirección' },
-          { id: 'status', label: 'Estado', size: 'xs', type: 'status', align: 'center' },
-          { id: 'createdAt', label: 'Creación', type: 'date', align: 'center', size: 'sm' },
+          { id: "username", label: "Nombre", tooltip: true, size: "sm" },
+          { id: "mail", label: "Email", size: "sm" },
+          { id: "phone", label: "Teléfono", size: "xs" },
+          { id: "ds_profile", label: "Perfil", size: "sm", tooltip: true },
+          { id: "logged", label: "Acceso", type: "status", size: "xs", align: "center" },
+          { id: "dt_last", label: "Ult. Acceso", type: "datetime", tooltip: true },
         ]}
         rows={rows}
         total={total}
         actions={[
-          { label: 'Editar', icon: <span>✏️</span>, onClick: handleEdit },
-          { label: 'Eliminar', icon: <span>🗑️</span>, onClick: handleDelete },
+          { label: "Editar", icon: <span>✏️</span>, onClick: handleEdit },
+          { label: "Eliminar", icon: <span>🗑️</span>, onClick: handleDelete },
         ]}
       />
+
       <ConfirmModal
         {...showConfirmModal}
-        onClose={() => { setShowConfirmModal({ ...showConfirmModal, isOpen: false }) }}
+        onClose={() => {
+          setShowConfirmModal({ ...showConfirmModal, isOpen: false });
+        }}
         onConfirm={handleConfirm}
       />
-      {/* <Modal isOpen={open} onClose={() => setOpen(false)} size='md'>
-      </Modal> */}
+
+      <ModalForm
+        loading={loading}
+        data={selected}
+        isOpen={showFormModal.isOpen}
+        onClose={handleCreate}
+        onSubmit={handleSubmit}
+        title="Registrar usuario"
+        description="Completa el siguiente formulario para registrar un nuevo usuario."
+        schema={[
+          {
+            key: "new_user",
+            label: "Usuario",
+            required: true
+          },
+          {
+            key: "mail",
+            label: "Correo",
+            type: "email",
+            required: true,
+            pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "El correo no es válido." },
+            breakpoint: { xs: 6 },
+          },
+          {
+            key: "pass",
+            label: "Contraseña",
+            type: "password",
+            minLength: showFormModal.isEdit ? 0 : 8,
+            pattern: showFormModal.isEdit ? undefined : { value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, message: "La contraseña debe tener al menos 8 caracteres, una letra y un número." },
+            breakpoint: { xs: 6 },
+            required: !showFormModal.isEdit
+          },
+          {
+            key: "name",
+            label: "Nombre",
+            required: true
+          },
+          {
+            key: "fl_name",
+            label: "Apellido Paterno",
+            required: true,
+            breakpoint: { xs: 6 },
+          },
+          {
+            key: "ml_name",
+            label: "Apellido Materno",
+            required: true,
+            breakpoint: { xs: 6 },
+          },
+          {
+            key: "profile",
+            label: "Perfil",
+            type: "select",
+            required: true,
+            options: [{ label: "Gerente", value: "5" }],
+            breakpoint: { xs: 6 },
+          },
+          {
+            key: "phone",
+            label: "Celular",
+            type: "tel",
+            required: true,
+            breakpoint: { xs: 6 },
+          },
+        ]}
+      />
     </RootLayout>
-  )
+  );
 }

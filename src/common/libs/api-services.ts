@@ -1,11 +1,11 @@
-// ✅ NO CAMBIA: imports y definición
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   Method,
-  AxiosError,
 } from 'axios';
+
+import { getCurrentUser } from '../utils';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -16,7 +16,6 @@ export interface RequestOptions {
   isFormData?: boolean;
 }
 
-// ✅ NUEVO tipo para retorno seguro
 export interface SafeResponse<T> {
   response?: T;
   error?: { status?: number; message: string };
@@ -65,30 +64,40 @@ class ApiService {
     options?: RequestOptions
   ): Promise<T> {
     const isUpload = options?.isFormData ?? false;
-
+    const isGetLikeMethod = method === 'GET' || method === 'HEAD';
+  
+    const { token } = getCurrentUser() || {};
+  
+    const preparedData = data ? { ...data } : {};
+  
+    if (token) {
+      preparedData['token'] = token;
+    };
+  
     const config: AxiosRequestConfig = {
       method,
       url: endpoint,
-      params: options?.params,
+      params: isGetLikeMethod ? { ...options?.params, ...preparedData } : options?.params,
       timeout: options?.timeout ?? 10000,
       headers: {
         ...(options?.headers || {}),
       },
     };
-
-    if (data) {
+  
+    if (!isGetLikeMethod && preparedData) {
       if (isUpload) {
-        config.data = data;
+        config.data = preparedData; 
       } else {
-        config.data = JSON.stringify(data);
+        config.data = JSON.stringify(preparedData);
         config.headers!['Content-Type'] = 'application/json';
       }
     }
-
+  
     const response: AxiosResponse<T> = await this.instance.request(config);
     return response.data;
   }
-
+  
+  
   public get<T = any>(endpoint: string, options?: RequestOptions) {
     return this.request<T>('GET', endpoint, undefined, options);
   }
@@ -113,10 +122,9 @@ class ApiService {
     return this.request<T>('HEAD', endpoint, undefined, options);
   }
 
-  // ✅ Nueva API segura
   public safe = {
-    get: <T = any>(endpoint: string, options?: RequestOptions): Promise<SafeResponse<T>> =>
-      this.wrapSafe<T>('GET', endpoint, undefined, options),
+    get: <T = any>(endpoint: string, data?: any, options?: RequestOptions): Promise<SafeResponse<T>> =>
+      this.wrapSafe<T>('GET', endpoint, data, options),
 
     post: <T = any>(endpoint: string, data?: any, options?: RequestOptions): Promise<SafeResponse<T>> =>
       this.wrapSafe<T>('POST', endpoint, data, options),

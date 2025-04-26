@@ -157,6 +157,7 @@ const SmartInputComponent = forwardRef<SmartInputRef, SmartInputProps>((props, r
       <TextField
         id={generatedId}
         name={name}
+        required={required}
         label={label}
         placeholder={placeholder}
         value={value}
@@ -169,10 +170,13 @@ const SmartInputComponent = forwardRef<SmartInputRef, SmartInputProps>((props, r
         minRows={isTextArea ? 3 : undefined}
         maxRows={isTextArea ? 8 : undefined}
         error={!!error && touched}
-        helperText={touched && error ? error : ' '}
         inputProps={inputValidationProps}
         fullWidth={fullWidth}
         variant="outlined"
+        helperText={touched && error ? error : ''}
+        InputLabelProps={{
+          sx: { color: 'text.secondary' },
+        }}
         InputProps={{
           startAdornment: leftIcon ? (
             <InputAdornment position="start">{leftIcon}</InputAdornment>
